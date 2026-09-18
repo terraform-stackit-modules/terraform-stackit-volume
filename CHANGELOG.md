@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0 (2026-09-18)
+
+### Features
+
+* initial STACKIT volume module ([ae96301](https://github.com/terraform-stackit-modules/terraform-stackit-volume/commit/ae96301dc90fa2f3408108a04206750225e3f029))
+
 ## [1.0.1](https://github.com/terraform-stackit-modules/terraform-repo-template/compare/v1.0.0...v1.0.1) (2026-09-09)
 
 ### Bug Fixes
