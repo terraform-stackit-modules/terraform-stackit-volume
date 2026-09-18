@@ -7,6 +7,38 @@ This file provides context and instructions for AI coding agents (Copilot, Curso
 This is a Terraform module for [STACKIT](https://www.stackit.de/en/), the cloud platform by Schwarz Group.
 It is part of the [terraform-stackit-modules](https://github.com/terraform-stackit-modules) organization, which aims to provide community-maintained, production-grade Terraform modules for STACKIT.
 
+### This module: volume
+
+Creates and manages STACKIT **block volumes** (data disks) and optionally attaches them to
+existing servers. This is the DEDICATED module for volume creation — `terraform-stackit-compute`
+only *attaches* pre-existing volume IDs and must NOT create volumes (Babenko split: volumes are a
+module separate from the instance module).
+
+**Resources managed**
+- `stackit_volume` — 0..N block volumes, via `for_each` over `var.volumes`.
+- `stackit_server_volume_attach` — optional attachment, via `for_each` over the volumes whose
+  `attach_to_server_id` is set, keyed by the SAME stable key as the volume.
+
+**Key inputs** — `project_id` (req), `region`, `labels` (merged into every volume),
+`volumes` (map keyed by a stable id):
+`{availability_zone (req), name?, size?, source? {type,id}, performance_class?, description?,
+labels?, encryption_parameters? {kek_key_id,kek_key_version,kek_keyring_id,service_account,key_payload_base64?},
+attach_to_server_id?}`.
+
+**Outputs** — `volume_ids` (map key→id), `volume_names`, `volumes_encrypted`, `attached_server_ids`.
+
+**Gotchas**
+- A volume needs `size` for a bare volume AND for an `image` source; only a `volume`, `snapshot`
+  or `backup` source may omit it (STACKIT API: "size is a required option for no source or image
+  source"). Validated in `variables.tf`. `size` can only grow, not shrink.
+- `source` and `encryption_parameters` are nested single attributes → assign with `= { ... }`,
+  never `dynamic {}`.
+- The volumes map is keyed by a stable identifier reused as the attach key, so `for_each` never
+  runs over the created `volume_id` (known-after-apply). Never gate `for_each`/`count` on a
+  known-after-apply value.
+- `source.type` is validated against `image | volume | snapshot | backup`; validations on
+  optional nested attrs use `try()`.
+
 ## Repository structure
 
 ```
