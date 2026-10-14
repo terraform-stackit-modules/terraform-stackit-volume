@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/terraform-stackit-modules/terraform-stackit-volume/compare/v1.0.0...v1.1.0) (2026-10-14)
+
+### Features
+
+* Harmonize module README and fix lock-threads workflow permissions ([a70e443](https://github.com/terraform-stackit-modules/terraform-stackit-volume/commit/a70e443b9ecdd43d368e8fd533ee97b69b1b4dff))
+
 ## 1.0.0 (2026-09-18)
 
 ### Features
