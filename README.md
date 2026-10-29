@@ -74,6 +74,20 @@ volumes = {
 }
 ```
 
+**The linked `service_account` must hold the `kms.admin` role on the project**
+(via the `terraform-stackit-authorization` module, backed by
+`stackit_authorization_project_role_assignment`, which requires the provider
+experiment `iam`). The storage backend impersonates it to wrap/unwrap the volume's
+data key, which needs the `kms.key.version.decrypt` permission — the `kms.reader`
+role does NOT contain it. Without the assignment, volume creation fails with
+`STACKIT_KMS_PLUGIN: KMS Error: Access Forbidden`. See the
+[`encrypted`](./examples/encrypted) example for the full chain (kms +
+service-account + authorization modules).
+- **Prerequisite for Terratest / CI**: creating the role assignment requires the *caller*
+  (the CI service account) to hold the **IAM Member Admin** role on the project
+  (permission `iam.member.add`). A service account cannot grant itself this permission —
+  grant it out-of-band via the STACKIT Portal (IAM & management > Access) or the stackit CLI.
+
 ## Notes
 
 - A volume needs a `size` in every case EXCEPT when created from a `volume`, `snapshot` or
@@ -89,6 +103,8 @@ volumes = {
 ## Examples
 
 - [`basic`](./examples/basic) — minimal, self-contained example (requires only `project_id`).
+- [`encrypted`](./examples/encrypted) — volume encrypted with a STACKIT-KMS key-encryption-key,
+  using the published `terraform-stackit-kms` and `terraform-stackit-service-account` modules.
 
 <!-- markdownlint-disable MD001 -->
 ### Contributing
