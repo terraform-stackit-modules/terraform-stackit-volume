@@ -33,6 +33,15 @@ attach_to_server_id?}`.
   source"). Validated in `variables.tf`. `size` can only grow, not shrink.
 - `source` and `encryption_parameters` are nested single attributes → assign with `= { ... }`,
   never `dynamic {}`.
+- Encrypted volumes: the linked SA MUST hold `role = "kms.admin"` on the project via
+  `stackit_authorization_project_role_assignment` (needs provider experiment `iam`): the storage
+  backend impersonates it to wrap/unwrap the data key (permission `kms.key.version.decrypt`,
+  which `kms.reader` does NOT contain). Without it the volume creation fails with
+  `STACKIT_KMS_PLUGIN: KMS Error: Access Forbidden`. See `examples/encrypted` (which also declares
+  the `experiments = ["iam"]` provider block).
+- CREATING that assignment needs the CALLER to hold "IAM Member Admin" on the project
+  (iam.member.add): the CI SA must get it out-of-band (Portal / stackit CLI) — 403
+  "requester has no permission to edit members" otherwise.
 - The volumes map is keyed by a stable identifier reused as the attach key, so `for_each` never
   runs over the created `volume_id` (known-after-apply). Never gate `for_each`/`count` on a
   known-after-apply value.
