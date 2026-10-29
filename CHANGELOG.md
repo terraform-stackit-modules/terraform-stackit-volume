@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/terraform-stackit-modules/terraform-stackit-volume/compare/v1.1.0...v1.2.0) (2026-10-29)
+
+### Features
+
+* add encrypted volume example using the kms, service-account and authorization modules ([d691bfa](https://github.com/terraform-stackit-modules/terraform-stackit-volume/commit/d691bfa957f301406853fec6dcb45db70b11548a))
+
 ## [1.1.0](https://github.com/terraform-stackit-modules/terraform-stackit-volume/compare/v1.0.0...v1.1.0) (2026-10-14)
 
 ### Features
